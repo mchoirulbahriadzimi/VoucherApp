@@ -1,0 +1,57 @@
+// Schema untuk fallback database lokal (SQLite).
+// Mode utama aplikasi menggunakan Supabase (PostgreSQL) — lihat supabase-setup.sql.
+// Fallback ini dipakai hanya jika environment Supabase belum diisi (preview/dev).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Voucher {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  password    String   @default("")
+  profile     String   @default("default")
+  uptime      String   @default("0s")
+  disabled    String   @default("false")
+  limitUptime String   @default("") @map("limit_uptime")
+  comment     String   @default("")
+  removed     Int      @default(0)
+  expired     String   @default("false")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([code])
+  @@index([profile])
+  @@index([disabled])
+  @@index([removed])
+  @@map("vouchers")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  fullname  String   @default("")
+  avatar    String   @default("")
+  email     String   @default("")
+  phone     String   @default("")
+  bio       String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("admins")
+}
+
+model RouterConfig {
+  id        Int     @id @default(1)
+  ip        String  @default("")
+  port      String  @default("8728")
+  username  String  @default("")
+  password  String  @default("")
+  connected Boolean @default(false)
+
+  @@map("router_config")
+}
